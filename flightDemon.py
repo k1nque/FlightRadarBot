@@ -24,8 +24,8 @@ async def processFlights(users: sqlite3.Cursor, conn: sqlite3.Connection):
         if len(flights) == 0:
             await bot.send_message(user.UID, 'no aircrafts')
         for flight in flights:
-            await bot.send_message(user.UID, f"*Flight ID*: {flight.id}\n"
-                                       f"*Aircraft Code*: {flight.aircraft_code}\n"
+            await bot.send_message(user.UID, f"<b>Flight I</b>: {flight.id}\n"
+                                       f"<b>Aircraft Code</b>: {flight.aircraft_code}\n"
                                        f"https://www.flightradar24.com/{flight.icao_24bit}/{flight.id}",
                              )
         conn.execute("""UPDATE users SET notified = ? WHERE UID = ?""", (user.notified, user.UID))

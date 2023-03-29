@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, Bot, executor, types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp, Command
-from config import TOKEN, bot, dp, IsByWebhooks
+from config import TOKEN, dp, IsByWebhooks
+import config
 from json import dumps
 import sqlite3
 from utility import getUserState
@@ -19,7 +20,16 @@ UserState is a dict object with keys:
 
 
 def startBot():
-    executor.start_polling(dp, skip_updates=True)
+    if IsByWebhooks:
+        executor.start_webhook(dispatcher=dp,
+                               webhook_path=config.WEBHOOK_PATH,
+                               on_startup=None,
+                               on_shutdown=None,
+                               skip_updates=True,
+                               host=config.WEBAPP_HOST,
+                               port=config.WEBAPP_PORT)
+    else:
+        executor.start_polling(dp, skip_updates=True)
 
 
 @dp.message_handler(CommandStart())
@@ -31,7 +41,7 @@ async def start(msg: types.Message):
                                         "CHANGE-DISTANCE": False,
                                         "READY": False})))
     conn.commit()
-    await msg.answer("Hello, I'm Flight Radar Bot, send me your location,"
+    await msg.answer("Hello, I'm <b><i>Flight Radar Bot</i></b>, send me your location,"
                      " and I will send you notifications about aircrafts flying near you")
 
 
@@ -52,9 +62,9 @@ async def location(msg: types.Message):
         msg.chat.id))
     conn.commit()
     if userState["NO-DISTANCE"]:
-        await msg.answer("Now send me distance-threshold to aircraft in meters")
+        await msg.answer("Send me distance-threshold to aircraft in km")
     else:
-        await msg.answer("Your new location is *saved*", parse_mode='MarkdownV2')
+        await msg.answer("Your new location is <b>saved</b>")
 
 
 @dp.message_handler(CommandHelp())
@@ -68,7 +78,7 @@ async def set_location(msg: types.Message):
     userState["CHANGE-LOCATION"] = True
     conn.execute("""UPDATE users SET user_state = ?""", (dumps(userState),))
     conn.commit()
-    await msg.answer("Now you can send me location!")
+    await msg.answer("Now you can send me <b>location</b>!")
 
 
 @dp.message_handler(Command('set_distance'))
@@ -77,7 +87,7 @@ async def set_distance(msg: types.Message):
     userState["CHANGE-DISTANCE"] = True
     conn.execute("""UPDATE users SET user_state = ?""", (dumps(userState),))
     conn.commit()
-    await msg.answer("Now you can send me distance threshold in metres")
+    await msg.answer("Now you can send me distance threshold in <b><i>metres</i><b>")
 
 
 @dp.message_handler()
