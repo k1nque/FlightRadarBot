@@ -4,5 +4,5 @@ CREATE TABLE users(
     latitude REAL,
     longitude REAL,
     distance INTEGER,
-    notified BLOB
+    notified TEXT
 )
