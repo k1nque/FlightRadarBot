@@ -25,7 +25,7 @@ else:
     bot = Bot(TOKEN)
 dp = Dispatcher(bot, loop=get_event_loop())
 
-EPS = 0.5
+EPS = 2
 
 # LOGGER_SETTINGS = {
 #     "format": "%(asctime)s - %(name)s.%(funcName)s:%(lineno)d - %(levelname)s - %(message)s",  # noqa 501
