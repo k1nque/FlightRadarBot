@@ -6,6 +6,7 @@ __pycache__/
 .idea
 secret.py
 users.db
+test.py
 # C extensions
 *.so
 

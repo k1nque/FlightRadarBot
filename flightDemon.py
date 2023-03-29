@@ -1,7 +1,6 @@
 import sqlite3
-import aiogram
 from models.user import User
-from config import bot, TOKEN
+from config import bot
 import asyncio
 
 
