@@ -9,9 +9,7 @@ if os.path.isfile('secret.py'):
 else:
     TOKEN = os.getenv('TOKEN')
 
-IsByWebhooks = True
-
-
+IsByWebhooks = False
 
 if IsByWebhooks:
     WEBHOOK_HOST = "https://b8c3-45-9-46-141.eu.ngrok.io"

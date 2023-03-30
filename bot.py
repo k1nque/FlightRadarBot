@@ -5,9 +5,9 @@ import config
 from json import dumps
 import sqlite3
 from utility import getUserState
+import re
 
 conn = sqlite3.connect('users.db')
-cursor = conn.cursor()
 
 """
 UserState is a dict object with keys:
@@ -34,7 +34,7 @@ def startBot():
 
 @dp.message_handler(CommandStart())
 async def start(msg: types.Message):
-    cursor.execute("""INSERT OR REPLACE INTO users(UID, user_state) VALUES(?, ?)""",
+    conn.execute("""INSERT OR REPLACE INTO users(UID, user_state) VALUES(?, ?)""",
                    (msg.chat.id, dumps({"NO-LOCATION": True,
                                         "NO-DISTANCE": True,
                                         "CHANGE-LOCATION": False,
@@ -49,7 +49,7 @@ async def start(msg: types.Message):
 async def location(msg: types.Message):
     userState = getUserState(conn, msg.chat.id)
     userState["NO-LOCATION"] = False
-    cursor.execute("""
+    conn.execute("""
             UPDATE users SET 
                 latitude = ?,
                 longitude = ?,
@@ -76,6 +76,7 @@ async def help(msg: types.Message):
 async def set_location(msg: types.Message):
     userState = getUserState(conn, msg.chat.id)
     userState["CHANGE-LOCATION"] = True
+    userState["CHANGE-DISTANCE"] = False
     conn.execute("""UPDATE users SET user_state = ?""", (dumps(userState),))
     conn.commit()
     await msg.answer("Now you can send me <b>location</b>!")
@@ -85,6 +86,7 @@ async def set_location(msg: types.Message):
 async def set_distance(msg: types.Message):
     userState = getUserState(conn, msg.chat.id)
     userState["CHANGE-DISTANCE"] = True
+    userState["CHANGE-LOCATION"] = False
     conn.execute("""UPDATE users SET user_state = ?""", (dumps(userState),))
     conn.commit()
     await msg.answer("Now you can send me distance threshold in <b><i>metres</i><b>")
@@ -100,17 +102,25 @@ async def any(msg: types.Message):
             userState["NO-DISTANCE"] = False
             if not userState["NO-LOCATION"]:
                 userState["READY"] = True
-            cursor.execute("""UPDATE users SET user_state = ?, distance = ? WHERE UID = ?""",
+            conn.execute("""UPDATE users SET user_state = ?, distance = ? WHERE UID = ?""",
                            (dumps(userState), dist, msg.chat.id))
             await msg.answer("New distance threshold is saved")
             conn.commit()
         except ValueError:
             await msg.answer("Distance is incorrect")
-    elif userState["CHANGE-LOCATION"]: #TODO Change location by coords
+
+    elif userState["CHANGE-LOCATION"]:
         try:
-            pass
+            print(msg.text)
+            coords = re.findall('(\-?\d+\.?\d*)', msg.text)
+
+            if len(coords) != 2:
+                await msg.answer("Location coordinates is incorrect")
+            else:
+                lat, lon = coords
+                conn.execute("""UPDATE users SET latitude = ?, longitude = ? WHERE UID = ?""", (lat, lon, msg.chat.id))
         except:
-            pass
+            await msg.answer("Location coordinates is incorrect")
 
 
 if __name__ == "__main__":
