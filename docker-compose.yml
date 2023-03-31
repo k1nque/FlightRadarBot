@@ -8,4 +8,3 @@ services:
       - flightDB:/db
 volumes:
   flightDB:
-    external: True
