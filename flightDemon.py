@@ -1,11 +1,11 @@
 import sqlite3
 from models.user import User
-from config import bot
+from utility import bot, dbPath
 import asyncio
 
 
 async def startFlightDemon():
-    conn = sqlite3.connect('/db/users.db')
+    conn = sqlite3.connect(dbPath)
     while True:
         users = getUsers(conn)
         await processFlights(users, conn)

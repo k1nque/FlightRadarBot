@@ -1,13 +1,13 @@
 from aiogram import Dispatcher, Bot, executor, types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp, Command
-from config import TOKEN, dp, IsByWebhooks
+from utility import dp, IsByWebhooks
 import config
 from json import dumps
 import sqlite3
-from utility import getUserState
+from utility import getUserState, dbPath, onStartup, onShutdown
 import re
 
-conn = sqlite3.connect('/db/users.db')
+conn = sqlite3.connect(dbPath)
 
 """
 UserState is a dict object with keys:
@@ -21,10 +21,11 @@ UserState is a dict object with keys:
 
 def startBot():
     if IsByWebhooks:
+        print('huj')
         executor.start_webhook(dispatcher=dp,
                                webhook_path=config.WEBHOOK_PATH,
-                               on_startup=None,
-                               on_shutdown=None,
+                               on_startup=onStartup,
+                               on_shutdown=onShutdown,
                                skip_updates=True,
                                host=config.WEBAPP_HOST,
                                port=config.WEBAPP_PORT)
@@ -123,7 +124,3 @@ async def any(msg: types.Message):
         except:
             await msg.answer("Location coordinates is incorrect")
 
-
-if __name__ == "__main__":
-    bot = Bot(TOKEN)
-    dp = Dispatcher(bot)
