@@ -7,7 +7,7 @@ import sqlite3
 from utility import getUserState
 import re
 
-conn = sqlite3.connect('users.db')
+conn = sqlite3.connect('/db/users.db')
 
 """
 UserState is a dict object with keys:

@@ -5,7 +5,7 @@ import asyncio
 
 
 async def startFlightDemon():
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect('/db/users.db')
     while True:
         users = getUsers(conn)
         await processFlights(users, conn)

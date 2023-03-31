@@ -4,7 +4,7 @@ import threading
 from bot import startBot
 import asyncio
 from flightDemon import startFlightDemon
-from config import dp, IsByWebhooks
+from config import dp
 
 
 if __name__ == '__main__':
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.create_db:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect('/db/users.db')
         cur = conn.cursor()
         with open('SQL_scripts/database_init.sql', 'r') as file:
             script = file.read()
@@ -24,6 +24,3 @@ if __name__ == '__main__':
     else:
         dp.loop.create_task(startFlightDemon())
         startBot()
-        # botThread = threading.Thread(target=startBot)
-        # botThread.start()
-        # demonThread = threading.Thread(target = )

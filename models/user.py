@@ -4,6 +4,7 @@ from FlightRadar24.flight import Flight
 from FlightRadar24.api import FlightRadar24API
 from config import EPS
 
+
 EarthRadius = 6370
 
 
