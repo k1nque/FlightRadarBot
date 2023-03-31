@@ -95,7 +95,7 @@ async def set_distance(msg: types.Message):
 @dp.message_handler()
 async def any(msg: types.Message):
     userState = getUserState(conn, msg.chat.id)
-    if userState["CHANGE-DISTANCE"] or userState["NO-DISTANCE"]:
+    if not userState["CHANGE-LOCATION"] and (userState["CHANGE-DISTANCE"] or userState["NO-DISTANCE"]):
         try:
             dist = int(msg.text)
             userState["CHANGE-DISTANCE"] = False
@@ -118,6 +118,7 @@ async def any(msg: types.Message):
                 await msg.answer("Location coordinates is incorrect")
             else:
                 lat, lon = coords
+                await msg.answer("Your new location is <b>saved</b>")
                 conn.execute("""UPDATE users SET latitude = ?, longitude = ? WHERE UID = ?""", (lat, lon, msg.chat.id))
         except:
             await msg.answer("Location coordinates is incorrect")

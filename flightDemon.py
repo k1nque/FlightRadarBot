@@ -21,8 +21,8 @@ async def processFlights(users: sqlite3.Cursor, conn: sqlite3.Connection):
         if not user.isReady:
             continue
         flights = user.getNearAircrafts()
-        if len(flights) == 0:
-            await bot.send_message(user.UID, 'no aircrafts')
+        # if len(flights) == 0:
+        #     await bot.send_message(user.UID, 'no aircrafts')
         for flight in flights:
             await bot.send_message(user.UID, f"<b>Flight I</b>: {flight.id}\n"
                                        f"<b>Aircraft Code</b>: {flight.aircraft_code}\n"
